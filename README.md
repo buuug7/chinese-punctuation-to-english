@@ -1,4 +1,4 @@
-# chinese-punctuation-to-english README
+# chinese punctuation to english for vscode
 
 A vscode extension of converting Chinese punctuation to English.
 

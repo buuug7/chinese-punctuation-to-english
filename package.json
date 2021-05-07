@@ -1,6 +1,6 @@
 {
   "name": "chinese-punctuation-to-english",
-  "displayName": "chinese-punctuation-to-english",
+  "displayName": "Chinese punctuation to english for vscode",
   "description": "A vscode extension of converting Chinese punctuation to English.",
   "publisher": "buuug7",
   "icon": "icon.png",
@@ -20,13 +20,13 @@
     "chinese to english",
     "chinese punctuation to english"
   ],
-  "homepage": "https://github.com/buuug7/chinese-punctuation-to-english/blob/main/README.md",
+  "homepage": "https://github.com/buuug7/chinese-punctuation-to-english-vsocode/blob/main/README.md",
   "repository": {
     "type": "git",
-    "url": "https://github.com/buuug7/chinese-punctuation-to-english.git"
+    "url": "https://github.com/buuug7/chinese-punctuation-to-english-vsocode.git"
   },
   "bugs": {
-    "url": "https://github.com/buuug7/chinese-punctuation-to-english/issues"
+    "url": "https://github.com/buuug7/chinese-punctuation-to-english-vsocode/issues"
   },
   "activationEvents": [
     "onCommand:chinese-punctuation-to-english.toEnglish"
