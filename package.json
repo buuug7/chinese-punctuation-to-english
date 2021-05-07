@@ -1,0 +1,64 @@
+{
+  "name": "chinese-punctuation-to-english",
+  "displayName": "chinese-punctuation-to-english",
+  "description": "A vscode extension of converting Chinese punctuation to English.",
+  "publisher": "buuug7",
+  "icon": "icon.png",
+  "author": "buuug7",
+  "license": "MIT",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.56.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "punctuation",
+    "chinese",
+    "chinese punctuation",
+    "chinese to english",
+    "chinese punctuation to english"
+  ],
+  "homepage": "https://github.com/buuug7/chinese-punctuation-to-english/blob/main/README.md",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/buuug7/chinese-punctuation-to-english.git"
+  },
+  "bugs": {
+    "url": "https://github.com/buuug7/chinese-punctuation-to-english/issues"
+  },
+  "activationEvents": [
+    "onCommand:chinese-punctuation-to-english.toEnglish"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "chinese-punctuation-to-english.toEnglish",
+        "title": "to english punctuation"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/glob": "^7.1.3",
+    "@types/mocha": "^8.0.4",
+    "@types/node": "^12.11.7",
+    "@types/vscode": "^1.56.0",
+    "@typescript-eslint/eslint-plugin": "^4.14.1",
+    "@typescript-eslint/parser": "^4.14.1",
+    "eslint": "^7.19.0",
+    "glob": "^7.1.6",
+    "mocha": "^8.2.1",
+    "typescript": "^4.1.3",
+    "vscode-test": "^1.5.0"
+  }
+}
