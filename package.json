@@ -1,12 +1,12 @@
 {
   "name": "chinese-punctuation-to-english",
-  "displayName": "Chinese punctuation to english for vscode",
-  "description": "A vscode extension of converting Chinese punctuation to English.",
+  "displayName": "Chinese punctuation to english",
+  "description": "中文标点符号转换为英文",
   "publisher": "buuug7",
   "icon": "icon.png",
   "author": "buuug7",
   "license": "MIT",
-  "version": "0.0.5",
+  "version": "0.2.4",
   "engines": {
     "vscode": "^1.56.0"
   },
@@ -14,20 +14,16 @@
     "Other"
   ],
   "keywords": [
+    "中文",
+    "标点符号",
+    "中文标点符号",
+    "标点符号转换",
+    "中文标点符号转换为英文",
     "punctuation",
     "chinese",
     "chinese punctuation",
-    "chinese to english",
     "chinese punctuation to english"
   ],
-  "homepage": "https://github.com/buuug7/chinese-punctuation-to-english-vsocode/blob/main/README.md",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/buuug7/chinese-punctuation-to-english-vsocode.git"
-  },
-  "bugs": {
-    "url": "https://github.com/buuug7/chinese-punctuation-to-english-vsocode/issues"
-  },
   "activationEvents": [
     "onCommand:chinese-punctuation-to-english.toEnglish"
   ],
@@ -60,5 +56,13 @@
     "mocha": "^8.2.1",
     "typescript": "^4.1.3",
     "vscode-test": "^1.5.0"
+  },
+  "homepage": "https://github.com/buuug7/chinese-punctuation-to-english-vsocode/blob/main/README.md",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/buuug7/chinese-punctuation-to-english-vsocode.git"
+  },
+  "bugs": {
+    "url": "https://github.com/buuug7/chinese-punctuation-to-english-vsocode/issues"
   }
 }

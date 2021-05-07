@@ -1,4 +1,4 @@
-# chinese punctuation to english for vscode
+# Chinese punctuation to english for vscode
 
 A vscode extension of converting Chinese punctuation to English.
 
@@ -24,15 +24,34 @@ Use the **to english punctuation** command from the Command palette to convert i
   // 顿号
   ["、", ", "],
 
-  // 左双引号
+  //冒号
+  ["：", ": "],
+
+  // 分好
+  ["；", "; "],
+
+  // 感叹号
+  ["！", "!"],
+
+  // 双引号
   ["“", '"'],
-  // 右双引号
   ["”", '"'],
 
-  //左单引号
+  // 单引号
   ["‘", "'"],
-  //右单引号
   ["’", "'"],
+
+  // 圆括号
+  ["（", "("],
+  ["）", ")"],
+
+  // 花括号
+  ["｛", "{"],
+  ["｝", "}"],
+
+  // 尖括号
+  ["《", "<"],
+  ["》", ">"],
 ];
 ```
 
