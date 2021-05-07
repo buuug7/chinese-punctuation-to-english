@@ -1,5 +1,6 @@
 # Change Log
 
-## 0.0.1 - 2021/05/07
+## 0.0.5 - 2021/05/07
 
-- Init
+- update icon and README.md
+- add LICENSE
