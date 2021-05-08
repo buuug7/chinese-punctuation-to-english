@@ -6,9 +6,9 @@ A vscode extension of converting Chinese punctuation to English.
 
 ## Usage
 
-Use the **to english punctuation** command from the Command palette to convert it.
+Use the **To english punctuation** command from the Command palette to convert it.
 
-在命令面板中使用**to english punctuation**命令来转换标点符号. 当前只支持以下标点符号中英文的映射:
+在命令面板中使用**To english punctuation**命令来转换标点符号. 当前只支持以下标点符号中英文的映射:
 
 ```javascript
 [

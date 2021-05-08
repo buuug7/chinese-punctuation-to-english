@@ -32,7 +32,8 @@
     "commands": [
       {
         "command": "chinese-punctuation-to-english.toEnglish",
-        "title": "to english punctuation"
+        "category": "Chinese-punctuation-to-english",
+        "title": "To english punctuation"
       }
     ]
   },
