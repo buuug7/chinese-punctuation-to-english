@@ -4,6 +4,18 @@ A vscode extension of converting Chinese punctuation to English.
 
 一个将中文标点符号转换为英文的 vscode 扩展.
 
+<p>
+    <a href="https://marketplace.visualstudio.com/items?itemName=buuug7.chinese-punctuation-to-english">
+        <img src="https://vsmarketplacebadge.apphb.com/version-short/buuug7.chinese-punctuation-to-english.svg" alt="version">
+    </a>
+    <a href="https://marketplace.visualstudio.com/items?itemName=buuug7.chinese-punctuation-to-english">
+        <img src="https://vsmarketplacebadge.apphb.com/installs-short/buuug7.chinese-punctuation-to-english.svg" alt="installs">
+    </a>
+    <a href="https://marketplace.visualstudio.com/items?itemName=buuug7.chinese-punctuation-to-english">
+        <img src="https://vsmarketplacebadge.apphb.com/rating-short/buuug7.chinese-punctuation-to-english.svg" alt="rating">
+    </a>
+</p>
+
 ## Usage
 
 Use the **To english punctuation** command from the Command palette to convert it.
