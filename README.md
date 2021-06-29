@@ -1,8 +1,8 @@
-# Chinese punctuation to english for vscode
+# 中文标点符号替换为英文 (Chinese punctuation to english for vscode)
 
-A vscode extension of converting Chinese punctuation to English.
+一个将中文标点符号替换为英文的 vscode 扩展, 为了排版的需要, 会自动在 `,.?:;!` 后面添加一个额外的空格.
 
-一个将中文标点符号转换为英文的 vscode 扩展.
+A vscode extension of converting Chinese punctuation to English, it also adds one blank after each of `, . ? : ; !` punctuations for the better format.
 
 ## Usage
 
