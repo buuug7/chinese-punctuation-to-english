@@ -45,8 +45,8 @@ const chineseToEnglishMap = new Map([
 
 /**
  * replace chinese punctuation to english of text
- * @param text 
- * @returns 
+ * @param text
+ * @returns
  */
 function replacePunctuation(text: string) {
   let _text = text;
@@ -58,8 +58,8 @@ function replacePunctuation(text: string) {
 
 /**
  * format punctuation of english
- * @param text 
- * @returns 
+ * @param text
+ * @returns
  */
 function formatPunctuation(text: string) {
   let _text = text;
@@ -72,13 +72,20 @@ function formatPunctuation(text: string) {
 
 function formatByRule(p: string, text: string) {
   switch (p) {
-    case ",":
     case ".":
+      return text.replace(
+        new RegExp(`(?<![\\w\\s\\.])(\\${p})(?!\\s+)`, "g"),
+        "$1 "
+      );
+    case ",":
     case "?":
     case ":":
     case ";":
     case "!":
-      return text.replace(new RegExp(`(\\${p})(?!\\s+)`, "g"), "$1 ");
+      return text.replace(
+        new RegExp(`(?<![\\s\\.])(\\${p})(?!\\s+|/)`, "g"),
+        "$1 "
+      );
     default:
       return text;
   }
