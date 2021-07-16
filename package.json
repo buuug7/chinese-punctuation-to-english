@@ -6,7 +6,7 @@
   "icon": "icon.png",
   "author": "buuug7",
   "license": "MIT",
-  "version": "0.3.5",
+  "version": "0.4.0",
   "engines": {
     "vscode": "^1.56.0"
   },
@@ -25,7 +25,7 @@
     "chinese punctuation to english"
   ],
   "activationEvents": [
-    "onCommand:chinese-punctuation-to-english.toEnglish"
+    "onStartupFinished"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -34,8 +34,22 @@
         "command": "chinese-punctuation-to-english.toEnglish",
         "category": "Chinese-punctuation-to-english",
         "title": "To english punctuation"
+      },
+      {
+        "command": "chinese-punctuation-to-english.formatTxt",
+        "category": "Chinese-punctuation-to-english",
+        "title": "Format txt"
       }
-    ]
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "when": "!explorerResourceIsFolder",
+          "group": "Chinese-punctuation-to-english",
+          "command": "chinese-punctuation-to-english.formatTxt"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",

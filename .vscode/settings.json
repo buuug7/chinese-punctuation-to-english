@@ -7,5 +7,14 @@
         "out": true // set this to false to include "out" folder in search results
     },
     // Turn off tsc task auto detection since we have the necessary tasks as npm scripts
-    "typescript.tsc.autoDetect": "off"
+    "typescript.tsc.autoDetect": "off",
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "name": "two-steps",
+            "database": "C:\\Users\\buuug7\\code\\two-steps\\database\\db.sqlite"
+        }
+    ],
+    "sqltools.useNodeRuntime": true
 }

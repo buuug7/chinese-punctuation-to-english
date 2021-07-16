@@ -67,6 +67,10 @@ Use the **To english punctuation** command from the Command palette to convert i
 ];
 ```
 
+## format txt file
+
+add a new command `format txt` command to format when line character length great than 50, add `\n`
+
 ## contribution
 
 If you're interested in contributing to, fork the [repo](https://github.com/buuug7/chinese-punctuation-to-english-vsocode.git) and submit pull requests.
