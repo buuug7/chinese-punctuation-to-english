@@ -1,5 +1,10 @@
 # Change Log
 
+# 1.0.0 - 2021/10/19
+
+- remove the extra behavior of add one blank after replace punctuations
+- remove `format txt` command
+
 ## 0.3.0 - 2021/06/29
 
 - add a new command to format txt files(when line character length great than 50, add `\n`)
