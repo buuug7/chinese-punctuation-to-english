@@ -41,6 +41,10 @@ const chineseToEnglishMap = new Map([
   // 尖括号
   ["《", "<"],
   ["》", ">"],
+
+  // 方括号
+  ["【", "["],
+  ["】", "]"],
 ]);
 
 /**
@@ -71,7 +75,7 @@ function replaceText() {
   const range = new vscode.Range(startPosition, endPosition);
   editor.edit((builder) => {
     builder.replace(range, replacedText);
-    vscode.window.showInformationMessage("成功替换中文标点符号为英文!");
+    vscode.window.showInformationMessage("成功替换标点符号为英文!");
   });
 }
 

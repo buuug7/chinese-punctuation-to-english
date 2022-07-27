@@ -1,5 +1,10 @@
 # Change Log
 
+# 1.1.0 - 2022/07/27
+
+- add '【】' punctuation for converting
+- remove `format txt` command
+
 # 1.0.0 - 2021/10/19
 
 - remove the extra behavior of add one blank after replace punctuations
