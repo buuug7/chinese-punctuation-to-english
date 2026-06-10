@@ -1,66 +1,21 @@
 import * as vscode from "vscode";
-
-const chineseToEnglishMap = new Map([
-  // 逗号
-  ["，", ","],
-
-  // 句号
-  ["。", "."],
-
-  // 问号
-  ["？", "?"],
-
-  // 顿号
-  ["、", ","],
-
-  //冒号
-  ["：", ":"],
-
-  // 分好
-  ["；", ";"],
-
-  // 感叹号
-  ["！", "!"],
-
-  // 双引号
-  ["“", '"'],
-  ["”", '"'],
-
-  // 单引号
-  ["‘", "'"],
-  ["’", "'"],
-
-  // 圆括号
-  ["（", "("],
-  ["）", ")"],
-
-  // 花括号
-  ["｛", "{"],
-  ["｝", "}"],
-
-  // 尖括号
-  ["《", "<"],
-  ["》", ">"],
-
-  // 方括号
-  ["【", "["],
-  ["】", "]"],
-]);
+import {
+  chineseToEnglishMap,
+  chinesePunctuationRegex,
+} from "./punctuation-map";
 
 /**
- * replace chinese punctuation to english of text
- * @param text
- * @returns
+ * Replace Chinese punctuation with English punctuation in text.
+ * @param text - The input text containing Chinese punctuation.
+ * @returns The text with Chinese punctuation replaced.
  */
-function replacePunctuation(text: string) {
-  let _text = text;
-  for (const [k, v] of chineseToEnglishMap) {
-    _text = _text.replace(new RegExp(k, "gu"), v);
-  }
-  return _text;
+export function replacePunctuation(text: string): string {
+  return text.replace(chinesePunctuationRegex, (match) => {
+    return chineseToEnglishMap.get(match)!;
+  });
 }
 
-function replaceText() {
+function replaceText(): void {
   const editor = vscode.window.activeTextEditor;
 
   if (!editor) {
@@ -68,7 +23,7 @@ function replaceText() {
   }
 
   const text = editor.document.getText();
-  let replacedText = replacePunctuation(text);
+  const replacedText = replacePunctuation(text);
 
   const startPosition = new vscode.Position(0, 0);
   const endPosition = new vscode.Position(editor.document.lineCount, 0);
@@ -79,7 +34,7 @@ function replaceText() {
   });
 }
 
-export function activate(context: vscode.ExtensionContext) {
+export function activate(context: vscode.ExtensionContext): void {
   context.subscriptions.push(
     vscode.commands.registerCommand(
       "chinese-punctuation-to-english.toEnglish",
@@ -88,11 +43,6 @@ export function activate(context: vscode.ExtensionContext) {
   );
 }
 
-function isEmptyOrWhitespace(text: string | null) {
-  if (text === null) {
-    return true;
-  }
-  return /^(\s*)/.exec(text)![1].length === text.length;
+export function deactivate(): void {
+  // Cleanup if needed
 }
-
-export function deactivate() {}
