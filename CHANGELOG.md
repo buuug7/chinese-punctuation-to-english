@@ -1,5 +1,9 @@
 # Change Log
 
+# 1.2.1 - 2026/06/10
+
+- update icon
+
 # 1.2.0 - 2026/06/10
 
 - feat: add auto-convert on save feature with config toggle (`chinese-punctuation-to-english.autoConvertOnSave`)
