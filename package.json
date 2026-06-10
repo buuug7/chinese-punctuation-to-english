@@ -3,7 +3,7 @@
   "displayName": "Chinese punctuation to english",
   "description": "中文标点符号转换为英文",
   "publisher": "buuug7",
-  "icon": "icon.png",
+  "icon": "media/icon.png",
   "author": "buuug7",
   "license": "MIT",
   "version": "1.1.0",
