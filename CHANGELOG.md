@@ -1,5 +1,12 @@
 # Change Log
 
+# 1.2.0 - 2026/06/10
+
+- feat: add auto-convert on save feature with config toggle (`chinese-punctuation-to-english.autoConvertOnSave`)
+- chore: modernize project — upgrade deps, refactor code, add test suite
+- chore: rewrite README with feature table, usage guide, and contributing section
+- chore: move icon assets to media/ directory
+
 # 1.1.0 - 2022/07/27
 
 - add '【】' punctuation for converting
