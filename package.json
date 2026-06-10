@@ -29,6 +29,16 @@
   ],
   "main": "./out/extension.js",
   "contributes": {
+    "configuration": {
+      "title": "Chinese Punctuation to English",
+      "properties": {
+        "chinese-punctuation-to-english.autoConvertOnSave": {
+          "type": "boolean",
+          "default": false,
+          "description": "在保存文件时自动将中文标点符号转换为英文标点"
+        }
+      }
+    },
     "commands": [
       {
         "command": "chinese-punctuation-to-english.toEnglish",

@@ -41,6 +41,33 @@ export function activate(context: vscode.ExtensionContext): void {
       replaceText
     )
   );
+
+  // 保存时自动转换（默认关闭，需用户开启配置项 "autoConvertOnSave"）
+  context.subscriptions.push(
+    vscode.workspace.onWillSaveTextDocument((event) => {
+      const config = vscode.workspace.getConfiguration(
+        "chinese-punctuation-to-english"
+      );
+      if (!config.get<boolean>("autoConvertOnSave", false)) {
+        return;
+      }
+
+      const document = event.document;
+      const text = document.getText();
+      const replaced = replacePunctuation(text);
+
+      if (text === replaced) {
+        return;
+      }
+
+      const fullRange = new vscode.Range(
+        document.positionAt(0),
+        document.positionAt(text.length)
+      );
+
+      event.waitUntil(Promise.resolve([vscode.TextEdit.replace(fullRange, replaced)]));
+    })
+  );
 }
 
 export function deactivate(): void {
