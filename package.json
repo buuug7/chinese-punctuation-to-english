@@ -1,6 +1,6 @@
 {
   "name": "chinese-punctuation-to-english",
-  "displayName": "Chinese punctuation to english",
+  "displayName": "Chinese Punctuation To English",
   "description": "中文标点符号转换为英文",
   "publisher": "buuug7",
   "icon": "media/icon.png",
@@ -30,7 +30,7 @@
   "main": "./out/extension.js",
   "contributes": {
     "configuration": {
-      "title": "Chinese Punctuation to English",
+      "title": "Chinese Punctuation To English",
       "properties": {
         "chinese-punctuation-to-english.autoConvertOnSave": {
           "type": "boolean",

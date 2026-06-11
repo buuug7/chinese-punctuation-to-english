@@ -1,4 +1,4 @@
-# Chinese Punctuation to English
+# Chinese Punctuation To English
 
 中文标点符号一键转换为英文的 VS Code 扩展。
 
