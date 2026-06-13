@@ -1,5 +1,10 @@
 # Change Log
 
+# 1.2.2 - 2026/06/13
+
+- chore: normalize title/display name capitalization
+- update icon
+
 # 1.2.1 - 2026/06/10
 
 - update icon
