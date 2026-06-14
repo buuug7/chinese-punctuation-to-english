@@ -1,12 +1,12 @@
 {
   "name": "chinese-punctuation-to-english",
   "displayName": "Chinese Punctuation To English",
-  "description": "中文标点符号转换为英文",
+  "description": "中文标点符号与英文标点符号之间的双向转换",
   "publisher": "buuug7",
   "icon": "media/icon.png",
   "author": "buuug7",
   "license": "MIT",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "engines": {
     "vscode": "^1.96.0"
   },
@@ -14,15 +14,14 @@
     "Other"
   ],
   "keywords": [
-    "中文",
-    "标点符号",
-    "中文标点符号",
+    "标点",
+    "中文标点",
+    "英文标点",
     "标点符号转换",
-    "中文标点符号转换为英文",
     "punctuation",
-    "chinese",
+    "punctuation converter",
     "chinese punctuation",
-    "chinese punctuation to english"
+    "english punctuation"
   ],
   "activationEvents": [
     "onStartupFinished"
