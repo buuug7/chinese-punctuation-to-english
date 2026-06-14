@@ -77,6 +77,8 @@
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
+    "package": "vsce package",
+    "publish": "vsce publish",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src",
     "test": "node ./out/test/runTest.js"
@@ -86,6 +88,7 @@
     "@types/mocha": "^10.0.10",
     "@types/node": "^22.14.0",
     "@types/vscode": "^1.96.0",
+    "@vscode/vsce": "^3.9.2",
     "@vscode/test-electron": "^2.4.1",
     "eslint": "^9.0.0",
     "glob": "^10.4.0",
