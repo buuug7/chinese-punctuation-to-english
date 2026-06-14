@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-A VS Code extension that converts Chinese punctuation marks to their English equivalents in the active editor. Registered as `buuug7.chinese-punctuation-to-english` on the marketplace.
+A VS Code extension that converts Chinese punctuation to English equivalents **and** English punctuation to Chinese equivalents in the active editor. Registered as `buuug7.chinese-punctuation-to-english` on the marketplace.
 
 **Stack:** TypeScript 4.x, VS Code API ^1.56, Node.js 12.x  
 **Entry:** `src/extension.ts` → compiled to `out/extension.js`
@@ -28,25 +28,33 @@ A VS Code extension that converts Chinese punctuation marks to their English equ
 
 - **Event:** `onStartupFinished` — extension loads once VS Code is fully ready (no lazy activation).
 
-### Command
+### Commands
 
-- **ID:** `chinese-punctuation-to-english.toEnglish`
-- **Title:** "To English Punctuation"
-- **Category:** `Chinese-punctuation-to-english`
+| ID | Title | Category |
+|---|---|---|
+| `chinese-punctuation-to-english.toEnglish` | Punctuation To English | Chinese-punctuation-to-english |
+| `chinese-punctuation-to-english.toChinese` | Punctuation To Chinese | Chinese-punctuation-to-english |
+
 - **Triggered from:** Command Palette or editor right-click context menu
 
 ### Core Logic (`src/extension.ts`)
 
-1. **`chineseToEnglishMap`** — A `Map<string, string>` holding 18 Chinese→English punctuation pairs:
-   - `，。？、：；！"＂'‘（）｛｝《》【】` mapped to `, . ? , : ; ! " " ' ' ( ) { } < > [ ]`
-2. **`replacePunctuation(text)`** — Iterates the map and uses `RegExp(k, "gu")` to replace all occurrences globally.
-3. **`replaceText()`** — Gets text from the active editor, replaces all punctuation in the full document range, and applies the edit via `editor.edit()`. Shows an information message on success.
-4. **`activate()`** — Registers the command subscription.
+1. **`chineseToEnglishMap`** (`src/punctuation-map.ts`) — A `Map<string, string>` holding 55 Chinese→English punctuation pairs covering:
+   - **CJK punctuation** (28 pairs): `，。？、：；！"＂'‘（）｛｝《》〈〉【】〔〕〖〗「」『』` → ASCII equivalents
+   - **Fullwidth ASCII** (27 pairs): `＂＇－．／～＃＄％＆＊＠＾＿｀｜＋＝＜＞＼［］｟｠` → ASCII equivalents
+2. **`englishToChineseMap`** — Dynamically built from `chineseToEnglishMap` (first-wins for many-to-one mappings), keeping both directions in sync without a separately maintained reverse map.
+3. **`chinesePunctuationRegex`** / **`englishPunctuationRegex`** — Single regex built once per direction for efficient global replacement.
+4. **`replacePunctuationToEnglish(text)`** — Replaces Chinese punctuation with English using the forward map + regex.
+5. **`replacePunctuationToChinese(text)`** — Replaces English punctuation with Chinese using the reverse map + regex.
+6. **`replaceText()` / `replaceTextToChinese()`** — Gets active editor text, runs the appropriate conversion over the full document range, applies via `editor.edit()`, and shows a result message.
+7. **`activate()`** — Registers both command subscriptions and the auto-save handler.
+8. **Auto-save** — Listens to `onWillSaveTextDocument`; reads `autoConvertOnSave` (boolean, default false) and `autoConvertTarget` (`"english"` or `"chinese"`, default `"english"`) config to decide whether and in which direction to convert on save.
 
 ### Key Design Choices
 
 - Operates on the **entire document** (not selection-based).
 - Uses `Map` instead of a plain object — deterministic iteration order.
+- Reverse mapping is **derived dynamically** from the forward map — no separate map to maintain.
 - `RegExp` with `gu` flags ensures global Unicode-aware replacement.
 - `onStartupFinished` activation means the command is always available without first-use delay.
 
@@ -57,7 +65,9 @@ A VS Code extension that converts Chinese punctuation marks to their English equ
 - **Framework:** Mocha + `vscode-test`
 - **Location:** `src/test/suite/extension.test.ts`
 - **Run:** `npm test` (launches a VS Code extension host test runner)
-- Tests currently contain a single sample test — add test cases for `replacePunctuation()` by importing the function.
+- Two test suites:
+  - `replacePunctuationToEnglish` — covers all Chinese→English mapping pairs and edge cases
+  - `replacePunctuationToChinese` — covers all English→Chinese mapping pairs and edge cases
 
 ---
 
