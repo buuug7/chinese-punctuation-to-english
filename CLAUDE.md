@@ -39,9 +39,9 @@ A VS Code extension that converts Chinese punctuation to English equivalents **a
 
 ### Core Logic (`src/extension.ts`)
 
-1. **`chineseToEnglishMap`** (`src/punctuation-map.ts`) — A `Map<string, string>` holding 55 Chinese→English punctuation pairs covering:
-   - **CJK punctuation** (28 pairs): `，。？、：；！"＂'‘（）｛｝《》〈〉【】〔〕〖〗「」『』` → ASCII equivalents
-   - **Fullwidth ASCII** (27 pairs): `＂＇－．／～＃＄％＆＊＠＾＿｀｜＋＝＜＞＼［］｟｠` → ASCII equivalents
+1. **`chineseToEnglishMap`** (`src/punctuation-map.ts`) — A `Map<string, string>` holding 54 Chinese→English punctuation pairs covering:
+   - **CJK punctuation** (29 pairs): `，。？、：；！"＂'‘（）｛｝《》〈〉【】〔〕〖〗「」『』` → ASCII equivalents
+   - **Fullwidth ASCII** (25 pairs): `＂＇－．／～＃＄％＆＊＠＾＿｀｜＋＝＜＞＼［］｟｠` → ASCII equivalents
 2. **`englishToChineseMap`** — Dynamically built from `chineseToEnglishMap` (first-wins for many-to-one mappings), keeping both directions in sync without a separately maintained reverse map.
 3. **`chinesePunctuationRegex`** / **`englishPunctuationRegex`** — Single regex built once per direction for efficient global replacement.
 4. **`replacePunctuationToEnglish(text)`** — Replaces Chinese punctuation with English using the forward map + regex.
