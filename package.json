@@ -35,7 +35,16 @@
         "chinese-punctuation-to-english.autoConvertOnSave": {
           "type": "boolean",
           "default": false,
-          "description": "在保存文件时自动将中文标点符号转换为英文标点"
+          "description": "在保存文件时自动替换标点符号"
+        },
+        "chinese-punctuation-to-english.autoConvertTarget": {
+          "type": "string",
+          "default": "english",
+          "enum": [
+            "english",
+            "chinese"
+          ],
+          "description": "自动替换标点符号的目标类型"
         }
       }
     },
@@ -43,12 +52,12 @@
       {
         "command": "chinese-punctuation-to-english.toEnglish",
         "category": "Chinese-punctuation-to-english",
-        "title": "To English Punctuation"
+        "title": "Punctuation To English"
       },
       {
         "command": "chinese-punctuation-to-english.toChinese",
         "category": "Chinese-punctuation-to-english",
-        "title": "To Chinese Punctuation"
+        "title": "Punctuation To Chinese"
       }
     ],
     "menus": {

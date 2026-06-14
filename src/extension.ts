@@ -82,6 +82,7 @@ export function activate(context: vscode.ExtensionContext): void {
   );
 
   // 保存时自动转换（默认关闭，需用户开启配置项 "autoConvertOnSave"）
+  // 通过 "autoConvertTarget" 配置项控制替换为英文还是中文标点
   context.subscriptions.push(
     vscode.workspace.onWillSaveTextDocument((event) => {
       const config = vscode.workspace.getConfiguration(
@@ -93,7 +94,12 @@ export function activate(context: vscode.ExtensionContext): void {
 
       const document = event.document;
       const text = document.getText();
-      const replaced = replacePunctuationToEnglish(text);
+
+      const target = config.get<string>("autoConvertTarget", "english");
+      const replaced =
+        target === "chinese"
+          ? replacePunctuationToChinese(text)
+          : replacePunctuationToEnglish(text);
 
       if (text === replaced) {
         return;
