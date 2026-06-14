@@ -11,14 +11,14 @@ A VS Code extension that converts Chinese punctuation to English equivalents **a
 
 ## Build & Test Commands
 
-| Command | Action |
-|---|---|
-| `npm run compile` | Compile TypeScript (`tsc -p ./`) |
-| `npm run watch` | Watch mode (`tsc -watch -p ./`) |
-| `npm run lint` | ESLint on `src/` directory |
-| `npm test` | Compile + lint + run Mocha tests |
+| Command                     | Action                                            |
+| --------------------------- | ------------------------------------------------- |
+| `npm run compile`           | Compile TypeScript (`tsc -p ./`)                  |
+| `npm run watch`             | Watch mode (`tsc -watch -p ./`)                   |
+| `npm run lint`              | ESLint on `src/` directory                        |
+| `npm test`                  | Compile + lint + run Mocha tests                  |
 | `npm run vscode:prepublish` | Pre-publish compile (run automatically by `vsce`) |
-| `npx vsce package` | Package `.vsix` for distribution |
+| `npx vsce package`          | Package `.vsix` for distribution                  |
 
 ---
 
@@ -30,8 +30,8 @@ A VS Code extension that converts Chinese punctuation to English equivalents **a
 
 ### Commands
 
-| ID | Title | Category |
-|---|---|---|
+| ID                                         | Title                  | Category                       |
+| ------------------------------------------ | ---------------------- | ------------------------------ |
 | `chinese-punctuation-to-english.toEnglish` | Punctuation To English | Chinese-punctuation-to-english |
 | `chinese-punctuation-to-english.toChinese` | Punctuation To Chinese | Chinese-punctuation-to-english |
 
@@ -40,7 +40,7 @@ A VS Code extension that converts Chinese punctuation to English equivalents **a
 ### Core Logic (`src/extension.ts`)
 
 1. **`chineseToEnglishMap`** (`src/punctuation-map.ts`) — A `Map<string, string>` holding 54 Chinese→English punctuation pairs covering:
-   - **CJK punctuation** (29 pairs): `，。？、：；！"＂'‘（）｛｝《》〈〉【】〔〕〖〗「」『』` → ASCII equivalents
+   - **CJK punctuation** (29 pairs): `,.?,:;!"＂''(){}<>〈〉[]〔〕〖〗「」『』` → ASCII equivalents
    - **Fullwidth ASCII** (25 pairs): `＂＇－．／～＃＄％＆＊＠＾＿｀｜＋＝＜＞＼［］｟｠` → ASCII equivalents
 2. **`englishToChineseMap`** — Dynamically built from `chineseToEnglishMap` (first-wins for many-to-one mappings), keeping both directions in sync without a separately maintained reverse map.
 3. **`chinesePunctuationRegex`** / **`englishPunctuationRegex`** — Single regex built once per direction for efficient global replacement.
@@ -74,6 +74,7 @@ A VS Code extension that converts Chinese punctuation to English equivalents **a
 ## Debugging
 
 Use the **"Run Extension"** launch config in `.vscode/launch.json`:
+
 - Opens a new VS Code Extension Development Host window.
 - Pre-launch task compiles TypeScript.
 - Use **"Extension Tests"** to run tests in the debugger.
@@ -83,6 +84,7 @@ Use the **"Run Extension"** launch config in `.vscode/launch.json`:
 ## Publishing
 
 The extension is published via `vsce`. Key files for publishing:
+
 - `.vscodeignore` — excludes source maps, `.ts` files, config, and dev files from the packaged extension.
 - `icon.png` — marketplace icon.
 - Version is managed in `package.json`.
@@ -99,3 +101,19 @@ The extension is published via `vsce`. Key files for publishing:
 - **No `throw` of non-Error literals** (`no-throw-literal: warn`).
 - **No unused variables:** opt-in check — currently `noUnusedParameters` is commented out in `tsconfig.json`.
 - Avoid adding side effects beyond the explicit command; the extension replaces text and shows a single info message.
+
+### Release & Publishing
+
+Release process (run these steps in order):
+
+1. **Changelog** — Update `CHANGELOG.md`: summarize all changes since the last release under a new version header. Follow the existing format (`## X.Y.Z (YYYY-MM-DD)` with emoji-prefixed sections).
+2. **Changelog** prefer use chinese language
+3. **Version bump** — Follow [semantic versioning](https://semver.org/):
+   - `package.json` → update `version` field
+   - `CHANGELOG.md` → ensure the version header matches
+4. **Commit** — `git add -A && git commit -m "chore: bump version to X.Y.Z"` (include `Co-Authored-By: deepseek-v4-flash` in the footer)
+5. **Tag** — `git tag vX.Y.Z`
+6. **Push** — `git push && git push --tags`
+7. **Package VSIX** — `npx vsce package` (produces `chinese-punctuation-to-english-X.Y.Z.vsix`)
+8. **GitHub Release** — Go to https://github.com/buuug7/chinese-punctuation-to-english/releases/new, select the tag, fill title, paste CHANGELOG content, **upload the `.vsix` file** as asset, click "Publish release"
+9. **Marketplace Publish** — `npm run publish` (runs `vsce publish`, pushes to VS Code Marketplace)
