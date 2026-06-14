@@ -16,6 +16,7 @@ export const chineseToEnglishMap = new Map<string, string>([
 
   //冒号
   ["：", ":"],
+
   // 分号
   ["；", ";"],
 
@@ -53,5 +54,38 @@ export const chineseToEnglishMap = new Map<string, string>([
  */
 export const chinesePunctuationRegex = new RegExp(
   `[${[...chineseToEnglishMap.keys()].join("")}]`,
+  "gu"
+);
+
+/**
+ * Build the English→Chinese reverse map from the forward map.
+ *
+ * Since multiple Chinese punctuation can map to the same English character
+ * (e.g. "，"→"," and "、”→","), the first occurrence in map order wins.
+ * This keeps the two directions in sync without maintaining a separate map.
+ */
+function buildEnglishToChineseMap(): Map<string, string> {
+  const map = new Map<string, string>();
+  for (const [chinese, english] of chineseToEnglishMap) {
+    if (!map.has(english)) {
+      map.set(english, chinese);
+    }
+  }
+  return map;
+}
+
+export const englishToChineseMap = buildEnglishToChineseMap();
+
+/**
+ * A single regex matching any English punctuation character that has a Chinese
+ * equivalent. Built once for efficient global replacement.
+ *
+ * Characters that are special inside a character class (], \, ^, -) are
+ * escaped to keep the regex valid.
+ */
+export const englishPunctuationRegex = new RegExp(
+  `[${[...englishToChineseMap.keys()]
+    .map((k) => k.replace(/[\]\\^-]/g, "\\$&"))
+    .join("")}]`,
   "gu"
 );

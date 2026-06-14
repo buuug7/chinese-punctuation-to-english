@@ -44,6 +44,11 @@
         "command": "chinese-punctuation-to-english.toEnglish",
         "category": "Chinese-punctuation-to-english",
         "title": "To English Punctuation"
+      },
+      {
+        "command": "chinese-punctuation-to-english.toChinese",
+        "category": "Chinese-punctuation-to-english",
+        "title": "To Chinese Punctuation"
       }
     ],
     "menus": {
@@ -51,6 +56,10 @@
         {
           "group": "Chinese-punctuation-to-english",
           "command": "chinese-punctuation-to-english.toEnglish"
+        },
+        {
+          "group": "Chinese-punctuation-to-english",
+          "command": "chinese-punctuation-to-english.toChinese"
         }
       ]
     }

@@ -2,6 +2,8 @@ import * as vscode from "vscode";
 import {
   chineseToEnglishMap,
   chinesePunctuationRegex,
+  englishToChineseMap,
+  englishPunctuationRegex,
 } from "./punctuation-map";
 
 /**
@@ -9,9 +11,20 @@ import {
  * @param text - The input text containing Chinese punctuation.
  * @returns The text with Chinese punctuation replaced.
  */
-export function replacePunctuation(text: string): string {
+export function replacePunctuationToEnglish(text: string): string {
   return text.replace(chinesePunctuationRegex, (match) => {
     return chineseToEnglishMap.get(match)!;
+  });
+}
+
+/**
+ * Replace English punctuation with Chinese punctuation in text.
+ * @param text - The input text containing English punctuation.
+ * @returns The text with English punctuation replaced.
+ */
+export function replacePunctuationToChinese(text: string): string {
+  return text.replace(englishPunctuationRegex, (match) => {
+    return englishToChineseMap.get(match)!;
   });
 }
 
@@ -23,7 +36,7 @@ function replaceText(): void {
   }
 
   const text = editor.document.getText();
-  const replacedText = replacePunctuation(text);
+  const replacedText = replacePunctuationToEnglish(text);
 
   const startPosition = new vscode.Position(0, 0);
   const endPosition = new vscode.Position(editor.document.lineCount, 0);
@@ -34,11 +47,37 @@ function replaceText(): void {
   });
 }
 
+function replaceTextToChinese(): void {
+  const editor = vscode.window.activeTextEditor;
+
+  if (!editor) {
+    return;
+  }
+
+  const text = editor.document.getText();
+  const replacedText = replacePunctuationToChinese(text);
+
+  const startPosition = new vscode.Position(0, 0);
+  const endPosition = new vscode.Position(editor.document.lineCount, 0);
+  const range = new vscode.Range(startPosition, endPosition);
+  editor.edit((builder) => {
+    builder.replace(range, replacedText);
+    vscode.window.showInformationMessage("成功替换标点符号为中文!");
+  });
+}
+
 export function activate(context: vscode.ExtensionContext): void {
   context.subscriptions.push(
     vscode.commands.registerCommand(
       "chinese-punctuation-to-english.toEnglish",
       replaceText
+    )
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand(
+      "chinese-punctuation-to-english.toChinese",
+      replaceTextToChinese
     )
   );
 
@@ -54,7 +93,7 @@ export function activate(context: vscode.ExtensionContext): void {
 
       const document = event.document;
       const text = document.getText();
-      const replaced = replacePunctuation(text);
+      const replaced = replacePunctuationToEnglish(text);
 
       if (text === replaced) {
         return;
