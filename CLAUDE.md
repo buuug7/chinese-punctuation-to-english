@@ -47,8 +47,9 @@ A VS Code extension that converts Chinese punctuation to English equivalents **a
 4. **`replacePunctuationToEnglish(text)`** — Replaces Chinese punctuation with English using the forward map + regex.
 5. **`replacePunctuationToChinese(text)`** — Replaces English punctuation with Chinese using the reverse map + regex.
 6. **`replaceText()` / `replaceTextToChinese()`** — Gets active editor text, runs the appropriate conversion over the full document range, applies via `editor.edit()`, and shows a result message.
-7. **`activate()`** — Registers both command subscriptions and the auto-save handler.
-8. **Auto-save** — Listens to `onWillSaveTextDocument`; reads `autoConvertOnSave` (boolean, default false) and `autoConvertTarget` (`"english"` or `"chinese"`, default `"english"`) config to decide whether and in which direction to convert on save.
+7. **`isLanguageAllowed()`** — Checks `document.languageId` against the `autoConvertLanguageWhitelist` config. Only `plaintext` and `markdown` are allowed by default, preventing accidental damage to code and config files.
+8. **`activate()`** — Registers both command subscriptions and the auto-save handler.
+9. **Auto-save** — Listens to `onWillSaveTextDocument`; reads `autoConvertOnSave` (boolean, default false), `autoConvertTarget` (`"english"` or `"chinese"`, default `"english"`), and `autoConvertLanguageWhitelist` (string[], default `["plaintext", "markdown"]`) config. Uses **language whitelist** (not file-path blacklist) to avoid breaking config files, code, and other punctuation-sensitive formats.
 
 ### Key Design Choices
 
@@ -57,6 +58,8 @@ A VS Code extension that converts Chinese punctuation to English equivalents **a
 - Reverse mapping is **derived dynamically** from the forward map — no separate map to maintain.
 - `RegExp` with `gu` flags ensures global Unicode-aware replacement.
 - `onStartupFinished` activation means the command is always available without first-use delay.
+- Auto-save uses a **language whitelist** (`document.languageId`) rather than a file-path blacklist — eliminates the endless maintenance of exclusion patterns and covers all existing and future file formats at once.
+- Manual commands (command palette / right-click menu) are **unaffected** by the language whitelist — they always operate on the full document regardless of language.
 
 ---
 

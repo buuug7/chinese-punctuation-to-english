@@ -66,6 +66,25 @@ function replaceTextToChinese(): void {
   });
 }
 
+/**
+ * Check whether the given document is in the language whitelist for auto-conversion.
+ */
+function isLanguageAllowed(document: vscode.TextDocument): boolean {
+  const config = vscode.workspace.getConfiguration(
+    "chinese-punctuation-to-english"
+  );
+  const whitelist = config.get<string[]>("autoConvertLanguageWhitelist", [
+    "plaintext",
+    "markdown",
+  ]);
+
+  if (whitelist.length === 0) {
+    return true; // 白名单为空表示允许所有语言
+  }
+
+  return whitelist.includes(document.languageId);
+}
+
 export function activate(context: vscode.ExtensionContext): void {
   context.subscriptions.push(
     vscode.commands.registerCommand(
@@ -83,6 +102,7 @@ export function activate(context: vscode.ExtensionContext): void {
 
   // 保存时自动转换（默认关闭，需用户开启配置项 "autoConvertOnSave"）
   // 通过 "autoConvertTarget" 配置项控制替换为英文还是中文标点
+  // 通过 "autoConvertLanguageWhitelist" 配置项限定仅对纯文本/Markdown 等生效
   context.subscriptions.push(
     vscode.workspace.onWillSaveTextDocument((event) => {
       const config = vscode.workspace.getConfiguration(
@@ -93,6 +113,12 @@ export function activate(context: vscode.ExtensionContext): void {
       }
 
       const document = event.document;
+
+      // 仅允许白名单中的语言，防止破坏配置文件、代码等
+      if (!isLanguageAllowed(document)) {
+        return;
+      }
+
       const text = document.getText();
 
       const target = config.get<string>("autoConvertTarget", "english");

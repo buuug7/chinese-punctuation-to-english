@@ -1,5 +1,11 @@
 # Change Log
 
+# 2.1.0 - 2026/06/14
+
+- 🔒 自动保存替换改用语言白名单机制，默认仅允许 `plaintext`(纯文本) 和 `markdown` 文件，防止破坏配置文件、代码等标点敏感的文件格式
+- 🗑️ 移除 `autoConvertExcludePatterns` 黑名单配置项，替换为 `autoConvertLanguageWhitelist` 白名单配置项
+- 📝 更新 README，详细说明为什么使用语言白名单而非文件路径黑名单
+
 # 2.0.0 - 2026/06/14
 
 - ✨ 新增反向转换:英文标点符号 → 中文标点符号,支持命令面板和右键菜单

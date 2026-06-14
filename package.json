@@ -6,7 +6,7 @@
   "icon": "media/icon.png",
   "author": "buuug7",
   "license": "MIT",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "engines": {
     "vscode": "^1.96.0"
   },
@@ -45,6 +45,17 @@
             "chinese"
           ],
           "description": "自动替换标点符号的目标类型"
+        },
+        "chinese-punctuation-to-english.autoConvertLanguageWhitelist": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "plaintext",
+            "markdown"
+          ],
+          "description": "自动保存时允许替换标点符号的语言 ID 白名单（仅在此列表中的语言才会被替换，其他语言跳过）"
         }
       }
     },
