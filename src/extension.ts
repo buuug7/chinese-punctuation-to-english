@@ -30,7 +30,15 @@ const skipDecimalPoint: SkipRule = (match, offset, fullText) => {
   return /\d/.test(charBefore) && /\d/.test(charAfter);
 };
 
-const markdownRules: SkipRule[] = [skipOrderedList];
+/** Skip `>` when it's a Markdown blockquote marker (e.g. `> text`). */
+const skipBlockquote: SkipRule = (match, offset, fullText) => {
+  if (match !== ">") return false;
+  const lineStart = fullText.slice(0, offset).lastIndexOf("\n") + 1;
+  const prefix = fullText.slice(lineStart, offset);
+  return /^[>\s]*$/.test(prefix);
+};
+
+const markdownRules: SkipRule[] = [skipOrderedList, skipBlockquote];
 
 /**
  * Rules always applied when calling {@link replacePunctuationToChinese}.
