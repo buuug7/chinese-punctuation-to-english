@@ -23,6 +23,12 @@ export const chineseToEnglishMap = new Map<string, string>([
   // 感叹号
   ["！", "!"],
 
+  // 省略号
+  ["…", "..."],
+
+  // 破折号
+  ["—", "--"],
+
   // 双引号
   ["“", '"'],
   ["”", '"'],
@@ -151,23 +157,54 @@ export const chinesePunctuationRegex = new RegExp(
 );
 
 /**
- * Build the English→Chinese reverse map from the forward map.
+ * 英文符号 → 中文标点的映射表。
  *
- * Since multiple Chinese punctuation can map to the same English character
- * (e.g. "，"→"," and "、”→","), the first occurrence in map order wins.
- * This keeps the two directions in sync without maintaining a separate map.
+ * 注意：这是一个手动维护的映射，只包含真正的中文标点，
+ * 不包含纯全角 ASCII 符号（＃＄％＊等），避免破坏 Markdown 语法。
  */
-function buildEnglishToChineseMap(): Map<string, string> {
-  const map = new Map<string, string>();
-  for (const [chinese, english] of chineseToEnglishMap) {
-    if (!map.has(english)) {
-      map.set(english, chinese);
-    }
-  }
-  return map;
-}
+export const englishToChineseMap = new Map<string, string>([
+  // 逗号
+  [",", "，"],
 
-export const englishToChineseMap = buildEnglishToChineseMap();
+  // 句号
+  [".", "。"],
+
+  // 问号
+  ["?", "？"],
+
+  // 冒号
+  [":", "："],
+
+  // 分号
+  [";", "；"],
+
+  // 感叹号
+  ["!", "！"],
+
+  // 省略号
+  ["…", "……"],
+
+  // 破折号
+  ["—", "——"],
+
+  // 双引号
+  ['"', "“"],
+
+  // 单引号
+  ["'", "‘"],
+
+  // 圆括号
+  ["(", "（"],
+  [")", "）"],
+
+  // 尖括号
+  ["<", "《"],
+  [">", "》"],
+
+  // 方括号
+  ["[", "【"],
+  ["]", "】"],
+]);
 
 /**
  * A single regex matching any English punctuation character that has a Chinese
@@ -182,3 +219,4 @@ export const englishPunctuationRegex = new RegExp(
     .join("")}]`,
   "gu"
 );
+
