@@ -21,7 +21,22 @@ const skipOrderedList: SkipRule = (match, offset, fullText) => {
   return /^\d+$/.test(prefix);
 };
 
+/** Skip `.` when it's a decimal point (e.g. `2.3`, `1.80`). */
+const skipDecimalPoint: SkipRule = (match, offset, fullText) => {
+  if (match !== ".") return false;
+  // digit before and after → it's a decimal point, not a period
+  const charBefore = fullText[offset - 1];
+  const charAfter = fullText[offset + 1];
+  return /\d/.test(charBefore) && /\d/.test(charAfter);
+};
+
 const markdownRules: SkipRule[] = [skipOrderedList];
+
+/**
+ * Rules always applied when calling {@link replacePunctuationToChinese}.
+ * Currently: decimal point protection.
+ */
+const defaultRules: SkipRule[] = [skipDecimalPoint];
 
 // ── Core replace functions ─────────────────────────────────────────────
 
@@ -34,14 +49,15 @@ export function replacePunctuationToEnglish(text: string): string {
 
 /**
  * Replace English punctuation with Chinese punctuation in text.
- * @param rules - Skip rules. Pass `markdownRules` for Markdown.
+ * @param rules - Additional skip rules. Pass `markdownRules` for Markdown.
  */
 export function replacePunctuationToChinese(
   text: string,
   rules?: SkipRule[],
 ): string {
+  const allRules = defaultRules.concat(rules ?? []);
   return text.replace(englishPunctuationRegex, (match, offset, fullText) => {
-    const shouldSkip = rules?.some((r) => r(match, offset, fullText));
+    const shouldSkip = allRules.some((r) => r(match, offset, fullText));
     return shouldSkip ? match : englishToChineseMap.get(match)!;
   });
 }
