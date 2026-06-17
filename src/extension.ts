@@ -13,12 +13,12 @@ import {
 
 type SkipRule = (match: string, offset: number, fullText: string) => boolean;
 
-/** Skip `.` when it's a Markdown ordered list marker (e.g. `1. item`). */
+/** Skip `.` when it's a list/numbering marker (e.g. `1.`, `## 2.`). */
 const skipOrderedList: SkipRule = (match, offset, fullText) => {
   if (match !== ".") return false;
   const lineStart = fullText.slice(0, offset).lastIndexOf("\n") + 1;
   const prefix = fullText.slice(lineStart, offset);
-  return /^\d+$/.test(prefix);
+  return /\d+$/.test(prefix);
 };
 
 /** Skip `.` when it's a decimal point (e.g. `2.3`, `1.80`). */
