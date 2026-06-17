@@ -6,138 +6,142 @@ import {
   englishPunctuationRegex,
 } from "./punctuation-map";
 
-/**
- * Replace Chinese punctuation with English punctuation in text.
- * @param text - The input text containing Chinese punctuation.
- * @returns The text with Chinese punctuation replaced.
- */
+// ── Skip Rules ─────────────────────────────────────────────────────────
+//
+// A rule can prevent a matched character from being replaced.
+// Return `true` to keep the original character (skip replacement).
+
+type SkipRule = (match: string, offset: number, fullText: string) => boolean;
+
+/** Skip `.` when it's a Markdown ordered list marker (e.g. `1. item`). */
+const skipOrderedList: SkipRule = (match, offset, fullText) => {
+  if (match !== ".") return false;
+  const lineStart = fullText.slice(0, offset).lastIndexOf("\n") + 1;
+  const prefix = fullText.slice(lineStart, offset);
+  return /^\d+$/.test(prefix);
+};
+
+const markdownRules: SkipRule[] = [skipOrderedList];
+
+// ── Core replace functions ─────────────────────────────────────────────
+
 export function replacePunctuationToEnglish(text: string): string {
-  return text.replace(chinesePunctuationRegex, (match) => {
-    return chineseToEnglishMap.get(match)!;
-  });
+  return text.replace(
+    chinesePunctuationRegex,
+    (match) => chineseToEnglishMap.get(match)!,
+  );
 }
 
 /**
  * Replace English punctuation with Chinese punctuation in text.
- * @param text - The input text containing English punctuation.
- * @returns The text with English punctuation replaced.
+ * @param rules - Skip rules. Pass `markdownRules` for Markdown.
  */
-export function replacePunctuationToChinese(text: string): string {
-  return text.replace(englishPunctuationRegex, (match) => {
-    return englishToChineseMap.get(match)!;
+export function replacePunctuationToChinese(
+  text: string,
+  rules?: SkipRule[],
+): string {
+  return text.replace(englishPunctuationRegex, (match, offset, fullText) => {
+    const shouldSkip = rules?.some((r) => r(match, offset, fullText));
+    return shouldSkip ? match : englishToChineseMap.get(match)!;
   });
 }
 
-function replaceText(): void {
-  const editor = vscode.window.activeTextEditor;
+// ── Commands ───────────────────────────────────────────────────────────
 
-  if (!editor) {
-    return;
-  }
+function replaceTextToEnglish(): void {
+  const editor = vscode.window.activeTextEditor;
+  if (!editor) return;
 
   const text = editor.document.getText();
-  const replacedText = replacePunctuationToEnglish(text);
-
-  const startPosition = new vscode.Position(0, 0);
-  const endPosition = new vscode.Position(editor.document.lineCount, 0);
-  const range = new vscode.Range(startPosition, endPosition);
+  const replaced = replacePunctuationToEnglish(text);
+  const range = new vscode.Range(
+    editor.document.positionAt(0),
+    editor.document.positionAt(text.length),
+  );
   editor.edit((builder) => {
-    builder.replace(range, replacedText);
+    builder.replace(range, replaced);
     vscode.window.showInformationMessage("成功替换标点符号为英文!");
   });
 }
 
 function replaceTextToChinese(): void {
   const editor = vscode.window.activeTextEditor;
-
-  if (!editor) {
-    return;
-  }
+  if (!editor) return;
 
   const text = editor.document.getText();
-  const replacedText = replacePunctuationToChinese(text);
-
-  const startPosition = new vscode.Position(0, 0);
-  const endPosition = new vscode.Position(editor.document.lineCount, 0);
-  const range = new vscode.Range(startPosition, endPosition);
+  const rules =
+    editor.document.languageId === "markdown" ? markdownRules : undefined;
+  const replaced = replacePunctuationToChinese(text, rules);
+  const range = new vscode.Range(
+    editor.document.positionAt(0),
+    editor.document.positionAt(text.length),
+  );
   editor.edit((builder) => {
-    builder.replace(range, replacedText);
+    builder.replace(range, replaced);
     vscode.window.showInformationMessage("成功替换标点符号为中文!");
   });
 }
 
-/**
- * Check whether the given document is in the language whitelist for auto-conversion.
- */
-function isLanguageAllowed(document: vscode.TextDocument): boolean {
+// ── Auto-save ──────────────────────────────────────────────────────────
+
+function isLanguageAllowed(doc: vscode.TextDocument): boolean {
   const config = vscode.workspace.getConfiguration(
-    "chinese-punctuation-to-english"
+    "chinese-punctuation-to-english",
   );
   const whitelist = config.get<string[]>("autoConvertLanguageWhitelist", [
     "plaintext",
     "markdown",
   ]);
-
-  if (whitelist.length === 0) {
-    return true; // 白名单为空表示允许所有语言
-  }
-
-  return whitelist.includes(document.languageId);
+  return whitelist.length === 0 || whitelist.includes(doc.languageId);
 }
+
+function handleWillSave(event: vscode.TextDocumentWillSaveEvent): void {
+  const config = vscode.workspace.getConfiguration(
+    "chinese-punctuation-to-english",
+  );
+  if (!config.get<boolean>("autoConvertOnSave", false)) return;
+
+  const doc = event.document;
+  if (!isLanguageAllowed(doc)) return;
+
+  const target = config.get<string>("autoConvertTarget", "english");
+  const text = doc.getText();
+  const rules = doc.languageId === "markdown" ? markdownRules : undefined;
+  const replaced =
+    target === "chinese"
+      ? replacePunctuationToChinese(text, rules)
+      : replacePunctuationToEnglish(text);
+
+  if (text === replaced) return;
+
+  const fullRange = new vscode.Range(
+    doc.positionAt(0),
+    doc.positionAt(text.length),
+  );
+  event.waitUntil(
+    Promise.resolve([vscode.TextEdit.replace(fullRange, replaced)]),
+  );
+}
+
+// ── Activation ─────────────────────────────────────────────────────────
 
 export function activate(context: vscode.ExtensionContext): void {
   context.subscriptions.push(
     vscode.commands.registerCommand(
       "chinese-punctuation-to-english.toEnglish",
-      replaceText
-    )
+      replaceTextToEnglish,
+    ),
   );
 
   context.subscriptions.push(
     vscode.commands.registerCommand(
       "chinese-punctuation-to-english.toChinese",
-      replaceTextToChinese
-    )
+      replaceTextToChinese,
+    ),
   );
 
-  // 保存时自动转换（默认关闭，需用户开启配置项 "autoConvertOnSave"）
-  // 通过 "autoConvertTarget" 配置项控制替换为英文还是中文标点
-  // 通过 "autoConvertLanguageWhitelist" 配置项限定仅对纯文本/Markdown 等生效
   context.subscriptions.push(
-    vscode.workspace.onWillSaveTextDocument((event) => {
-      const config = vscode.workspace.getConfiguration(
-        "chinese-punctuation-to-english"
-      );
-      if (!config.get<boolean>("autoConvertOnSave", false)) {
-        return;
-      }
-
-      const document = event.document;
-
-      // 仅允许白名单中的语言，防止破坏配置文件、代码等
-      if (!isLanguageAllowed(document)) {
-        return;
-      }
-
-      const text = document.getText();
-
-      const target = config.get<string>("autoConvertTarget", "english");
-      const replaced =
-        target === "chinese"
-          ? replacePunctuationToChinese(text)
-          : replacePunctuationToEnglish(text);
-
-      if (text === replaced) {
-        return;
-      }
-
-      const fullRange = new vscode.Range(
-        document.positionAt(0),
-        document.positionAt(text.length)
-      );
-
-      event.waitUntil(Promise.resolve([vscode.TextEdit.replace(fullRange, replaced)]));
-    })
+    vscode.workspace.onWillSaveTextDocument(handleWillSave),
   );
 }
 

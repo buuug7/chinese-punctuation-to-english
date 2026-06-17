@@ -8,7 +8,7 @@ export default tseslint.config(
   ...tseslint.configs.recommended,
   {
     rules: {
-      curly: "warn",
+      curly: "off",
       eqeqeq: "warn",
       "no-throw-literal": "warn",
       "@typescript-eslint/no-unused-vars": [
