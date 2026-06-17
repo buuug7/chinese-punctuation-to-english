@@ -92,6 +92,18 @@
 
 > 反向映射仅包含以上 **14 个**条目,不包含 `#` `*` `` ` `` `-` `/` `~` `$` `%` `&` `@` `^` `_` `|` `+` `=` `\` `{` `}` 等纯全角 ASCII 符号,避免在 Markdown 等格式文件中破坏语法.
 
+### SkipRule 保护机制
+
+英转中时,部分字符会根据上下文被跳过替换,避免破坏 Markdown 语法:
+
+| 规则 | 保护场景 | 示例 | 文件类型 |
+|------|---------|------|---------|
+| `skipDecimalPoint` | 小数点 / 文件扩展名 / 版本号 | `2.3` `file.md` `v3.2` | 始终生效 |
+| `skipOrderedList` | 有序列表 / 标题编号 | `1. item` `## 2. 标题` | Markdown |
+| `skipBlockquote` | 块引用 | `> quote` `> > nested` | Markdown |
+| `skipMarkdownLink` | 链接中的括号 | `[text](url)` | Markdown |
+| `withProtectedCodeBlocks` | 行内代码和围栏代码块 | `` `printf("%d", a)` ``  `` ```json\n{"key": "val"}\n``` `` | Markdown |
+
 ## 自动保存转换
 
 扩展支持在保存文件时自动转换标点符号,需在 VS Code 设置中开启:
@@ -160,6 +172,11 @@ VS Code 的语言检测会自动判断文件类型,配置文件,代码文件,Doc
 
 - **中文→英文**:在 `chineseToEnglishMap` 中添加条目
 - **英文→中文**:在 `englishToChineseMap` 中手动添加条目(两个映射独立维护)
+
+SkipRule 规则定义在 [`src/extension.ts`](src/extension.ts),如需新增保护规则:
+
+1. 实现一个 `SkipRule` 函数(接收 `match, offset, fullText`,返回 `boolean`)
+2. 放入 `markdownRules` 数组(Markdown 专用)或 `defaultRules`(始终生效)
 
 ## 许可证
 

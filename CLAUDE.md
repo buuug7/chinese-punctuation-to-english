@@ -44,18 +44,27 @@ A VS Code extension that converts Chinese punctuation to English equivalents **a
    - **Fullwidth ASCII** (25 pairs): `＂＇－．／～＃＄％＆＊＠＾＿｀｜＋＝＜＞＼［］｟｠` → ASCII equivalents
 2. **`englishToChineseMap`** — **Manually maintained** separate map. Only includes genuine Chinese punctuation (14 entries: `, . ? : ; ! " ' () <> [] … —`), **excluding** pure fullwidth ASCII symbols (`# * `` ` `- / ~ $ % & @ ^ _ | + = \ { }`). This prevents breaking Markdown syntax when converting English→Chinese.
 3. **`chinesePunctuationRegex`** / **`englishPunctuationRegex`** — Single regex built once per direction for efficient global replacement.
-4. **`replacePunctuationToEnglish(text)`** — Replaces Chinese punctuation with English using the forward map + regex.
-5. **`replacePunctuationToChinese(text)`** — Replaces English punctuation with Chinese using the reverse map + regex.
-6. **`replaceText()` / `replaceTextToChinese()`** — Gets active editor text, runs the appropriate conversion over the full document range, applies via `editor.edit()`, and shows a result message.
-7. **`isLanguageAllowed()`** — Checks `document.languageId` against the `autoConvertLanguageWhitelist` config. Only `plaintext` and `markdown` are allowed by default, preventing accidental damage to code and config files.
-8. **`activate()`** — Registers both command subscriptions and the auto-save handler.
-9. **Auto-save** — Listens to `onWillSaveTextDocument`; reads `autoConvertOnSave` (boolean, default false), `autoConvertTarget` (`"english"` or `"chinese"`, default `"english"`), and `autoConvertLanguageWhitelist` (string[], default `["plaintext", "markdown"]`) config. Uses **language whitelist** (not file-path blacklist) to avoid breaking config files, code, and other punctuation-sensitive formats.
+4. **`SkipRule`** — A rule system that prevents specific characters from being replaced based on context. Three categories:
+   - **`defaultRules`** (always applied): `skipDecimalPoint` — protects `.` between word characters (decimals `2.3`, file extensions `file.md`/`说明.md`, versions `v3.2`).
+   - **`markdownRules`** (applied when `languageId === "markdown"`):
+     - `skipOrderedList` — protects `.` after digits at line start (`1.`, `## 2.`).
+     - `skipBlockquote` — protects `>` at line start (`> quote`).
+     - `skipMarkdownLink` — protects brackets and parens in `[text](url)`.
+5. **`withProtectedCodeBlocks()`** — Pre-processes text to protect inline code (`` `…` ``) and fenced code blocks (`` ```…``` ``) with placeholders before conversion, then restores them after. This ensures code content is never modified.
+6. **`replacePunctuationToEnglish(text)`** — Replaces Chinese punctuation with English using the forward map + regex.
+7. **`replacePunctuationToChinese(text, rules?)`** — Replaces English punctuation with Chinese using the reverse map + regex. Accepts optional `SkipRule[]` (pass `markdownRules` for Markdown). Code blocks are automatically protected.
+8. **`replaceTextToEnglish()` / `replaceTextToChinese()`** — Gets active editor text, runs the appropriate conversion over the full document range, applies via `editor.edit()`, and shows a result message.
+9. **`isLanguageAllowed()`** — Checks `document.languageId` against the `autoConvertLanguageWhitelist` config. Only `plaintext` and `markdown` are allowed by default, preventing accidental damage to code and config files.
+10. **`activate()`** — Registers both command subscriptions and the auto-save handler.
+11. **Auto-save** — Listens to `onWillSaveTextDocument`; reads `autoConvertOnSave` (boolean, default false), `autoConvertTarget` (`"english"` or `"chinese"`, default `"english"`), and `autoConvertLanguageWhitelist` (string[], default `["plaintext", "markdown"]`) config. Uses **language whitelist** (not file-path blacklist) to avoid breaking config files, code, and other punctuation-sensitive formats.
 
 ### Key Design Choices
 
 - Operates on the **entire document** (not selection-based).
 - Uses `Map` instead of a plain object — deterministic iteration order.
 - Reverse mapping is **manually maintained** — a separate `englishToChineseMap` that only includes genuine Chinese punctuation. Fullwidth ASCII symbols (`# * `` ` `-` etc.) are excluded to avoid breaking Markdown syntax.
+- **SkipRule system** — Context-aware rules prevent punctuation conversion in specific situations (ordered lists, blockquotes, links, decimals, file extensions). Rules are composable: `defaultRules` always apply, `markdownRules` are added for Markdown files.
+- **Code block protection** — Inline and fenced code blocks are isolated via placeholder substitution before any conversion runs, guaranteeing code content is never touched.
 - `RegExp` with `gu` flags ensures global Unicode-aware replacement.
 - `onStartupFinished` activation means the command is always available without first-use delay.
 - Auto-save uses a **language whitelist** (`document.languageId`) rather than a file-path blacklist — eliminates the endless maintenance of exclusion patterns and covers all existing and future file formats at once.
