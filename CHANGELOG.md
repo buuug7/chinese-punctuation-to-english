@@ -1,6 +1,18 @@
 # Change Log
 
-# 2.1.1 - 2026/06/14
+# 2.2.0 - 2026/06/17
+
+- ✨ 英文→中文映射改为手动维护，排除纯全角 ASCII 符号（`#` `*` `` ` `` 等），避免破坏 Markdown 语法
+- ✨ 新增 SkipRule 上下文保护规则：
+  - 小数点/文件扩展名/版本号保护（`2.3` `file.md` `v3.2`）
+  - Markdown 有序列表保护（`1. item` `## 2. 标题`）
+  - Markdown 块引用保护（`> quote`）
+  - Markdown 链接保护（`[text](url)`）
+- 🔒 代码块保护：行内代码（`` `code` ``）和围栏代码块（`` ``` ``` ``）中的标点不被替换
+- ✨ 新增省略号映射（`…` ↔ `...`）
+- ✨ 新增破折号映射（`—` ↔ `--`）
+- ♻️ 重构 `replacePunctuationToChinese`，支持可组合的 SkipRule
+- 📝 更新 README 和 CLAUDE.md，补充 SkipRule 和代码块保护说明
 
 - 🎯 优化 package.json 关键词，移除过长短语，增加更短的搜索词
 - 🐛 更新修复 README 错误的标点符号描述
