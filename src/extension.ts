@@ -38,7 +38,35 @@ const skipBlockquote: SkipRule = (match, offset, fullText) => {
   return /^[>\s]*$/.test(prefix);
 };
 
-const markdownRules: SkipRule[] = [skipOrderedList, skipBlockquote];
+/** Skip brackets/parens that are part of a Markdown link `[text](url)`. */
+const skipMarkdownLink: SkipRule = (match, offset, fullText) => {
+  const ahead = fullText.slice(offset + 1);
+  switch (match) {
+    case "[": {
+      // `[` followed by text and `](` → link start
+      const endBracket = ahead.indexOf("]");
+      return endBracket > 0 && ahead[endBracket + 1] === "(";
+    }
+    case "]":
+      return ahead.startsWith("(");
+    case "(":
+      return fullText[offset - 1] === "]";
+    case ")": {
+      // `)` closing a `](...)` sequence
+      const before = fullText.slice(0, offset);
+      const parenStart = before.lastIndexOf("(");
+      return (
+        parenStart > 0 &&
+        fullText[parenStart - 1] === "]" &&
+        !before.slice(parenStart + 1).includes("\n")
+      );
+    }
+    default:
+      return false;
+  }
+};
+
+const markdownRules: SkipRule[] = [skipOrderedList, skipBlockquote, skipMarkdownLink];
 
 /**
  * Rules always applied when calling {@link replacePunctuationToChinese}.
