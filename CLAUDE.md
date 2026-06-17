@@ -39,10 +39,10 @@ A VS Code extension that converts Chinese punctuation to English equivalents **a
 
 ### Core Logic (`src/extension.ts`)
 
-1. **`chineseToEnglishMap`** (`src/punctuation-map.ts`) — A `Map<string, string>` holding 54 Chinese→English punctuation pairs covering:
-   - **CJK punctuation** (29 pairs): `,.?,:;!"＂''(){}<>〈〉[]〔〕〖〗「」『』` → ASCII equivalents
+1. **`chineseToEnglishMap`** (`src/punctuation-map.ts`) — A `Map<string, string>` holding 56 Chinese→English punctuation pairs covering:
+   - **CJK punctuation** (31 pairs): `,.?,:;!"＂''(){}<>〈〉[]〔〕〖〗「」『』` → ASCII equivalents, plus `…` → `...`, `—` → `--`
    - **Fullwidth ASCII** (25 pairs): `＂＇－．／～＃＄％＆＊＠＾＿｀｜＋＝＜＞＼［］｟｠` → ASCII equivalents
-2. **`englishToChineseMap`** — Dynamically built from `chineseToEnglishMap` (first-wins for many-to-one mappings), keeping both directions in sync without a separately maintained reverse map.
+2. **`englishToChineseMap`** — **Manually maintained** separate map. Only includes genuine Chinese punctuation (14 entries: `, . ? : ; ! " ' () <> [] … —`), **excluding** pure fullwidth ASCII symbols (`# * `` ` `- / ~ $ % & @ ^ _ | + = \ { }`). This prevents breaking Markdown syntax when converting English→Chinese.
 3. **`chinesePunctuationRegex`** / **`englishPunctuationRegex`** — Single regex built once per direction for efficient global replacement.
 4. **`replacePunctuationToEnglish(text)`** — Replaces Chinese punctuation with English using the forward map + regex.
 5. **`replacePunctuationToChinese(text)`** — Replaces English punctuation with Chinese using the reverse map + regex.
@@ -55,7 +55,7 @@ A VS Code extension that converts Chinese punctuation to English equivalents **a
 
 - Operates on the **entire document** (not selection-based).
 - Uses `Map` instead of a plain object — deterministic iteration order.
-- Reverse mapping is **derived dynamically** from the forward map — no separate map to maintain.
+- Reverse mapping is **manually maintained** — a separate `englishToChineseMap` that only includes genuine Chinese punctuation. Fullwidth ASCII symbols (`# * `` ` `-` etc.) are excluded to avoid breaking Markdown syntax.
 - `RegExp` with `gu` flags ensures global Unicode-aware replacement.
 - `onStartupFinished` activation means the command is always available without first-use delay.
 - Auto-save uses a **language whitelist** (`document.languageId`) rather than a file-path blacklist — eliminates the endless maintenance of exclusion patterns and covers all existing and future file formats at once.
