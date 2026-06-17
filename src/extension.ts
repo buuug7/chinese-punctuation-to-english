@@ -75,6 +75,35 @@ const defaultRules: SkipRule[] = [skipDecimalPoint];
 
 // ── Core replace functions ─────────────────────────────────────────────
 
+/**
+ * Protect inline code (\`…\`) and fenced code blocks (\`\`\`…\`\`\`) with
+ * placeholders before conversion, then restore them after.
+ * This keeps code content unchanged regardless of what punctuation it contains.
+ */
+function withProtectedCodeBlocks(text: string, fn: (s: string) => string): string {
+  const blocks: string[] = [];
+
+  const protected_ = text
+    // inline code: `code`
+    .replace(/(`[^`]*`)/g, (m) => {
+      blocks.push(m);
+      return `\x00CODE${blocks.length - 1}\x00`;
+    })
+    // fenced code blocks: ```lang\ncode\n```
+    .replace(/(```[\s\S]*?```)/g, (m) => {
+      blocks.push(m);
+      return `\x00CODE${blocks.length - 1}\x00`;
+    });
+
+  const result = fn(protected_);
+
+  const SEP = String.fromCharCode(0);
+  return result.replace(
+    new RegExp(`${SEP}CODE(\\d+)${SEP}`, "g"),
+    (_, i) => blocks[+i],
+  );
+}
+
 export function replacePunctuationToEnglish(text: string): string {
   return text.replace(
     chinesePunctuationRegex,
@@ -84,6 +113,7 @@ export function replacePunctuationToEnglish(text: string): string {
 
 /**
  * Replace English punctuation with Chinese punctuation in text.
+ * Code blocks (inline \`…\` and fenced \`\`\`…\`\`\`) are automatically protected.
  * @param rules - Additional skip rules. Pass `markdownRules` for Markdown.
  */
 export function replacePunctuationToChinese(
@@ -91,10 +121,12 @@ export function replacePunctuationToChinese(
   rules?: SkipRule[],
 ): string {
   const allRules = defaultRules.concat(rules ?? []);
-  return text.replace(englishPunctuationRegex, (match, offset, fullText) => {
-    const shouldSkip = allRules.some((r) => r(match, offset, fullText));
-    return shouldSkip ? match : englishToChineseMap.get(match)!;
-  });
+  const convert = (t: string) =>
+    t.replace(englishPunctuationRegex, (match, offset, fullText) => {
+      const shouldSkip = allRules.some((r) => r(match, offset, fullText));
+      return shouldSkip ? match : englishToChineseMap.get(match)!;
+    });
+  return withProtectedCodeBlocks(text, convert);
 }
 
 // ── Commands ───────────────────────────────────────────────────────────
