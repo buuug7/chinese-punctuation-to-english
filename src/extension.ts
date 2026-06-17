@@ -21,13 +21,12 @@ const skipOrderedList: SkipRule = (match, offset, fullText) => {
   return /\d+$/.test(prefix);
 };
 
-/** Skip `.` when it's a decimal point (e.g. `2.3`, `1.80`). */
+/** Skip `.` within a word: decimal (`2.3`), file extension (`file.md`/`说明.md`), version (`v3.2`). */
 const skipDecimalPoint: SkipRule = (match, offset, fullText) => {
   if (match !== ".") return false;
-  // digit before and after → it's a decimal point, not a period
   const charBefore = fullText[offset - 1];
   const charAfter = fullText[offset + 1];
-  return /\d/.test(charBefore) && /\d/.test(charAfter);
+  return /[\p{L}\p{N}]/u.test(charBefore) && /[\p{L}\p{N}]/u.test(charAfter);
 };
 
 /** Skip `>` when it's a Markdown blockquote marker (e.g. `> text`). */
